@@ -1,0 +1,35 @@
+version: '2'
+services:
+  db:
+    image: mysql
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: Passw0rd
+      MYSQL_DATABASE: employee_db
+    networks:
+      - my-network
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    
+
+  web:
+    build: .
+    container_name: my-app
+    environment:
+      FLASK_APP: app.py
+      MYSQL_DATABASE_HOST: db  # Change to 'db' to match service name
+    networks:
+      - my-network
+    ports:
+      - '5000:5000'
+    depends_on:
+      - db
+        
+       
+
+networks:
+  my-network:
+    driver: bridge
+
